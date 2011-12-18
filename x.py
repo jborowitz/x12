@@ -1,15 +1,12 @@
 #!/usr/bin/python2.6 
-# This program should be run with python 2.6, but it would work with any
-# version after 2.5.  The reason it doesnt work with earlier versions is the
-# "any" command, which could probably be replaced
 #import urllib2 as url
 #import datetime as dt
-import csv 
-import subprocess as sp
+import csv, os, subprocess, sys, time
+from datetime import datetime
 
 outfiles = {}
 times = []
-a = csv.DictReader(open('lfp_malefemale.csv','rb'))
+a = csv.DictReader(open(sys.argv[1],'rb'))
 for i in a.fieldnames:
     if i != "date":
         outfiles[i] = open(i + '.spc','w')
@@ -18,72 +15,37 @@ for i in a.fieldnames:
 
 
 for line in a:
-    date = line['date']
+    date = datetime.strptime(line['date'],'%Y-%m')
     times.append(date)
     for field,v in line.items():        
         if field != "date":
             outfiles[field].write('\t\t' + v + '\n')
 
-print(times)
 times.sort()
-startDate = times[1]
+startDate = times[1].strftime('%Y.%m')
 endDate = times[len(times)-1]
-print(startDate)
-print(endDate)
 
 for filename, file in outfiles.items():
     file.writelines('\t\t)\n\tstart = ' + startDate + '}\nx11{}\n\n')
+    #string = ['/home/jborowitz/bin/x12a/x12a' , filename]
+    string = 'nohup /home/jborowitz/bin/x12a/x12a ' + filename + ' &'
+    print(string)
+    #a = subprocess.Popen(string)
+    #a.communicate()
+    a = subprocess.Popen(string,shell=True)
+    #a = subprocess.call(string)
+    
+    #a.wait()
+    #a.wait()
+    #print(a.returncode)
+    #a.terminate()
+    #while a.poll() is None:
+    #time.sleep(3)
+        #print(time.time())
+    #a.wait()
+    #a.communicate() #will not pass this line until the process above terminates
+
     #a = sp.call(['/home/jborowitz/bin/x12a/x12a', filename])
+    #a = sp.call(string, shell=True)
+    #print(a)
     
-
-    
-
-
-#for i,j in outfiles.items():
-    #print(i)
-    #print(j)
-#def fred(series_id): 
-    #api_key = 'f778a39f92e4e71d27b54ca4b613c28f'
-    #site_stub = 'http://api.stlouisfed.org/fred/'
-    ##series_id = 'GNPCA'
-    #realtime = '&realtime_start=1776-07-04&realtime_end=9999-12-31'
-    #file = series_id + '.csv'
-    #csvwriter = csv.writer(open(file, 'wb'), dialect = 'excel')
-    ##series_id = 'MTUR'
-    #start = '1776-07-04'
-    #end = '9999-12-31'
-    #url_string = (site_stub + 'series/observations?' + 'series_id=' + series_id +
-                 #realtime + '&api_key=' + api_key)
-    #print('Downloading from: ' + url_string)
-    #U = url.urlopen(url_string)
-    ##year = []
-    ##month = [] #day = []
-    #dates = []
-    #startdates = []
-    #enddates = []
-    #value = []
-    #U.readline
-    #csvwriter.writerow(['Year', 'Month', 'Day','Date',
-        #'Start_Year','Start_Month','Start_Day','Start_Date','End_Year','End_Month','End_Day', 'End_Date', series_id])
-    #for u in U.readlines():
-        #print(u)
-        #elements=u.strip().split(' ')
-        #if any((elements[0].find('xml') >= 0, elements[0].find('observations') >= 0,
-                #len(elements) <= 1)) : continue
-        #obs, rt_start, rt_end, date, val = u.strip().split(' ')
-        #y, m, d = date.split('\"')[1].split('-')
-        #date = dt.datetime(int(y), int(m), int(d))
-        #rtsy, rtsm, rtsd = rt_start.split('\"')[1].split('-')
-        #rtsdate = dt.datetime(int(rtsy), int(rtsm), int(rtsd))
-        #rtey, rtem, rted = rt_end.split('\"')[1].split('-')
-        #rtedate = dt.datetime(int(rtey), int(rtem), int(rted))
-        #dates.append(date)
-        #startdates.append(rtsdate)
-        #enddates.append(rtedate)
-        #value.append(val.split('\"')[1])
-        #csvwriter.writerow([y, m, d, date, rtsy, rtsm, rtsd, rtsdate, rtey, rtem, rted, rtedate, val.split('\"')[1]])
-    #return dates, value, startdates, enddates
-
-#m = fred('USPRIV')
-#The function fred returns the history of published parameter values from
-#ALFRED.  It also writes a csv file to series_id.csv
