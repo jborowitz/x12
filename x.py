@@ -34,13 +34,11 @@ for filename, file in outfiles.items():
     subprocess.call(['/home/jborowitz/bin/x12a/x12a',filename])
 
 
-headdict={'Date':'Date'}
+headdict={'date':'date'}
 for i in outfiles.iterkeys():
     headdict[i + 'sa'] = i + 'sa'
 allout = csv.DictWriter(open(sys.argv[1].split('.')[0] + '-out.csv','w'),headdict.keys())
-#allout.writerow( dict((n,n) for n in outheads))
-#allout.writerow( headdict)
-allout.writerow( {'Date':'Date', 'mensa':'mensa','womensa':'womensa'})
+allout.writerow( headdict)
 outvars = {}
 for filestub in outfiles.iterkeys():
     x12out = open(filestub + '.out','r')
@@ -50,7 +48,6 @@ for filestub in outfiles.iterkeys():
     outputcsv.write('date,' + filestub + '\n')
     while line.find('D 11') < 0:
         line = x12out.readline()
-        #print(line)
 
     outvars[filestub]=[]
     while year < maxyear:
@@ -63,22 +60,16 @@ for filestub in outfiles.iterkeys():
             outvars[filestub].extend(st)
             yearout.extend(st)
             line = x12out.readline()
-        for index in range(len(outvars[filestub])):
-            print(len(yearout))
+        for index in range(len(yearout)):
             if year < maxyear:
                 monthDate = dt.date(year,index + 13 - len(yearout),1)
             else:
                 monthDate = dt.date(year,index + 1,1)
             dstring = monthDate.strftime('%Y-%m')
-            #outputcsv.write(dstring + ',' + str(outvars[filestub][index]) + '\n')
             outputcsv.write(dstring + ',' + str(yearout[index]) + '\n')
-print(outvars)
 for j in range(len(times)):
     row = {}
-    row['Date']=times[j]
-    print(outfiles.keys())
+    row['date']=times[j].strftime('%Y-%m')
     for i in outfiles.keys():
-        print(i+'sa')
-        print(outvars[i])
         row[i+'sa']=outvars[i][j]
     allout.writerow(row)
