@@ -1,4 +1,4 @@
-#!/usr/bin/python2.6 
+#!/usr/bin/python3.1
 #import urllib2 as url
 #import datetime as dt
 import csv, os, subprocess, sys, time
@@ -7,8 +7,8 @@ import datetime as dt
 
 outfiles = {}
 times = []
-a = csv.DictReader(open(sys.argv[1],'rb'))
-for i in a.fieldnames:
+a = csv.DictReader(open(sys.argv[1],'r'))
+for i in list(a.fieldnames):
     if i != "date":
         outfiles[i] = open(i + '.spc','w')
         outfiles[i].writelines('series { title = \"' + i + '\"\n')
@@ -35,12 +35,12 @@ for filename, file in outfiles.items():
 
 
 headdict={'date':'date'}
-for i in outfiles.iterkeys():
+for i in outfiles.keys():
     headdict[i + 'sa'] = i + 'sa'
 allout = csv.DictWriter(open(sys.argv[1].split('.')[0] + '-out.csv','w'),headdict.keys())
 allout.writerow( headdict)
 outvars = {}
-for filestub in outfiles.iterkeys():
+for filestub in outfiles.keys():
     x12out = open(filestub + '.out','r')
     line = x12out.readline()
     year = -1
