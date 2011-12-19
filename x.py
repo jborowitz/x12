@@ -5,6 +5,10 @@ import csv, os, subprocess, sys, time
 from datetime import datetime
 import datetime as dt
 
+if len(sys.argv) <= 2:
+    outname = sys.argv[1].split('.')[0] + '-out.csv'
+else:
+    outname = sys.argv[2]
 outfiles = {}
 times = []
 a = csv.DictReader(open(sys.argv[1],'r'))
@@ -37,7 +41,7 @@ for filename, file in outfiles.items():
 headdict={'date':'date'}
 for i in outfiles.keys():
     headdict[i + 'sa'] = i + 'sa'
-allout = csv.DictWriter(open(sys.argv[1].split('.')[0] + '-out.csv','w'),headdict.keys())
+allout = csv.DictWriter(open(outname,'w'),headdict.keys())
 allout.writerow( headdict)
 outvars = {}
 for filestub in outfiles.keys():
@@ -65,11 +69,12 @@ for filestub in outfiles.keys():
                 monthDate = dt.date(year,index + 13 - len(yearout),1)
             else:
                 monthDate = dt.date(year,index + 1,1)
-            dstring = monthDate.strftime('%Y-%m')
+            dstring = monthDate.strftime('%Y-%m-%d')
             outputcsv.write(dstring + ',' + str(yearout[index]) + '\n')
+    outputcsv.close()
 for j in range(len(times)):
     row = {}
-    row['date']=times[j].strftime('%Y-%m')
+    row['date']=times[j].strftime('%Y-%m-%d')
     for i in outfiles.keys():
         row[i+'sa']=outvars[i][j]
     allout.writerow(row)
