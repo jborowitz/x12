@@ -5,6 +5,12 @@ import csv, os, subprocess, sys, time
 from datetime import datetime
 import datetime as dt
 
+spc1="series {\n\t title = \""
+spc2="\n\tperiod = 12\n\tdecimals=1\n\tmodelspan=(2002.1,)\n\tdata = (\n"
+spc3="\t\t)\n\tstart = "
+#spc2="\n\tperiod = 12\n\tstart = "
+spc4= "\n\tsavelog= peaks\n\t}\n\ttransform{ function=log }\n\tregression{ savelog= aictest }\n\t\n\toutlier{\n\ttypes= ( all )\n\tcritical=3.0\n\t}\n\tautomdl{ savelog= amd }\n\testimate{\n\tmaxiter = 10000\n\tprint= (roots regcmatrix acm)\n\tsavelog= (aicc aic bic hq afc)\n\t}\n\tcheck{print= all savelog= (lbq nrm)}\n\tx11{\n\t#seasonalma= MSR\n\tseasonalma= (s3x9 s3x5 s3x5 s3x5 s3x5 s3x5 s3x5 s3x5 s3x5\n\ts3x9 s3x5 s3x5 )\n\tsavelog= all\n\t}\n\tslidingspans{ }\n\thistory{\n\testimates= (fcst aic sadj sadjchng trend\n\ttrendchng)\n\tsavelog= (asa ach atr atc)\n\t}\n\t"
+ 
 if len(sys.argv) <= 2:
     outname = sys.argv[1].split('.')[0] + '-out.csv'
 else:
@@ -15,12 +21,12 @@ a = csv.DictReader(open(sys.argv[1],'r'))
 for i in list(a.fieldnames):
     if i != "date":
         outfiles[i] = open(i + '.spc','w')
-        outfiles[i].writelines('series { title = \"' + i + '\"\n')
-        outfiles[i].writelines('\tdata = (\n')
+        outfiles[i].writelines(spc1 + i + '\"\n')
+        outfiles[i].writelines(spc2)
 
 
 for line in a:
-    date = datetime.strptime(line['date'],'%Y-%m')
+    date = datetime.strptime(line['date'],'%m/%d/%Y')
     times.append(date)
     for field,v in line.items():        
         if field != "date":
@@ -33,7 +39,8 @@ maxyear = endDate.year
 print(maxyear)
 
 for filename, file in outfiles.items():
-    file.writelines('\t\t)\n\tstart = ' + startDate + '\n\tdecimals = 2}\nx11{}\n\n')
+    file.writelines(spc3 + startDate + spc4)
+    #file.writelines('\t\t)\n\tstart = ' + startDate + '\n\tdecimals = 4}\nx11{}\n\n')
     file.close()
     subprocess.call(['/home/jborowitz/bin/x12a/x12a',filename])
 
@@ -45,12 +52,13 @@ allout = csv.DictWriter(open(outname,'w'),headdict.keys())
 allout.writerow( headdict)
 outvars = {}
 for filestub in outfiles.keys():
+    print(filestub)
     x12out = open(filestub + '.out','r')
     line = x12out.readline()
     year = -1
     outputcsv = open(filestub + '.csv','w')
     outputcsv.write('date,' + filestub + '\n')
-    while line.find('D 11') < 0:
+    while line.find('D 10') < 0:
         line = x12out.readline()
 
     outvars[filestub]=[]
@@ -60,7 +68,7 @@ for filestub in outfiles.keys():
         year = int(line[2:6])
         yearout=[]
         while len(line) > 10:
-            st = line[9:66].split()
+            st = line[9:64].split()
             outvars[filestub].extend(st)
             yearout.extend(st)
             line = x12out.readline()
