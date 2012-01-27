@@ -8,8 +8,8 @@
 /*1/26/2011*/
 **********************************************************************
 clear
-/*freduse LNU03000000 UNRATENSA*/
-/*save fredout.dta, replace*/
+freduse LNU03000000 UNRATENSA
+save fredout.dta, replace
 /*This code imports two NSA series from fred, with the freduse module*/
 use fredout
 keep daten LNU03000000 UNRATENSA
@@ -30,7 +30,7 @@ order date num urate
 outsheet using unemp.csv, comma replace
 /*Export to .csv*/
 
-!/home/jborowitz/python/x.py unemp.csv unemp-sa.csv
+!C:\Python32\python.exe F:\x12a\stata\x.py unemp.csv unemp-sa.csv
 * Use x.py as: x.py infile outfile
 
 insheet using unemp-sa.csv, clear

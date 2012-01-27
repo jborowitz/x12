@@ -42,7 +42,7 @@ for filename, file in outfiles.items():
     file.writelines(spc3 + startDate + spc4)
     #file.writelines('\t\t)\n\tstart = ' + startDate + '\n\tdecimals = 4}\nx11{}\n\n')
     file.close()
-    subprocess.call(['/home/jborowitz/bin/x12a/x12a',filename])
+    subprocess.call(['F:\\x12a\\x12a',filename])
 
 
 headdict={'date':'date'}
