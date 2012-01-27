@@ -6,10 +6,10 @@ from datetime import datetime
 import datetime as dt
 
 spc1="series {\n\t title = \""
-spc2="\n\tperiod = 12\n\tdecimals=1\n\tmodelspan=(2002.1,)\n\tdata = (\n"
+spc2="\n\tdecimals=2\n\tdata = (\n"
 spc3="\t\t)\n\tstart = "
 #spc2="\n\tperiod = 12\n\tstart = "
-spc4= "\n\tsavelog= peaks\n\t}\n\ttransform{ function=log }\n\tregression{ savelog= aictest }\n\t\n\toutlier{\n\ttypes= ( all )\n\tcritical=3.0\n\t}\n\tautomdl{ savelog= amd }\n\testimate{\n\tmaxiter = 10000\n\tprint= (roots regcmatrix acm)\n\tsavelog= (aicc aic bic hq afc)\n\t}\n\tcheck{print= all savelog= (lbq nrm)}\n\tx11{\n\t#seasonalma= MSR\n\tseasonalma= (s3x9 s3x5 s3x5 s3x5 s3x5 s3x5 s3x5 s3x5 s3x5\n\ts3x9 s3x5 s3x5 )\n\tsavelog= all\n\t}\n\tslidingspans{ }\n\thistory{\n\testimates= (fcst aic sadj sadjchng trend\n\ttrendchng)\n\tsavelog= (asa ach atr atc)\n\t}\n\t"
+spc4= "\n\t}\nx11{}"
  
 if len(sys.argv) <= 2:
     outname = sys.argv[1].split('.')[0] + '-out.csv'
@@ -26,7 +26,7 @@ for i in list(a.fieldnames):
 
 
 for line in a:
-    date = datetime.strptime(line['date'],'%m/%d/%Y')
+    date = datetime.strptime(line['date'],'%b-%Y')
     times.append(date)
     for field,v in line.items():        
         if field != "date":
@@ -58,7 +58,7 @@ for filestub in outfiles.keys():
     year = -1
     outputcsv = open(filestub + '.csv','w')
     outputcsv.write('date,' + filestub + '\n')
-    while line.find('D 10') < 0:
+    while line.find('D 11') < 0:
         line = x12out.readline()
 
     outvars[filestub]=[]
