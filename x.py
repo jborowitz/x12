@@ -6,7 +6,7 @@ from datetime import datetime
 import datetime as dt
 
 spc1="series {\n\t title = \""
-spc2="\n\tdecimals=2\n\tdata = (\n"
+spc2="\n\tdecimals=3\n\tdata = (\n"
 spc3="\t\t)\n\tstart = "
 #spc2="\n\tperiod = 12\n\tstart = "
 spc4= "\n\t}\nx11{}"
