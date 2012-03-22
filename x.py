@@ -27,6 +27,18 @@ for i in list(a.fieldnames):
 
 for line in a:
     date = datetime.strptime(line['date'],'%b-%Y')
+    # This is where you change the format to parse the time in the .csv file.
+    # Some examples of characters to put in are below.  It is also possible to
+    # change ouput date formats below using these same codes.
+    ######################################################################
+    # %b abbreviated month name
+    # %B full month name
+    # %d Day of the month as a decimal number [01,31]
+    # %j Day of the year as a decimal number [001,366]
+    # %m Month as a decimal number [01,12]
+    # %y Year without century as a decimal number [00,99]
+    # %Y Year with century as a decimal number
+    ######################################################################
     times.append(date)
     for field,v in line.items():        
         if field != "date":
