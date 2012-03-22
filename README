@@ -1,0 +1,44 @@
+This project uses python to read in a .csv file, run it through x12a, and write
+the output as a .csv file.  The main part of the code is x.py.  
+
+Stata output .csv
+
+There MUST be a column titled "date" and it must be readable by python.  Python
+can read a wide variety of date formats, and it's not that hard to change, but
+the default is to take dates formatted like Jan-1998.o
+
+x.py reads in the output.csv file.  It also takes an optional second argument
+which is the name of the output .csv file that contains the seasonally adjusted
+data from running x12.
+
+Stata input .csv
+
+After x.py runs, it creates a date column and for each variable in the Stata
+output .csv file, it has a [var]sa variable, which is the seasonally adjusted
+series corresponding to that variable.  It creates a .csv file that can be read
+back into Stata 
+
+x12 options
+
+If you want to configure options for x12, check the documentation for x12 and
+add text to the spc[n] variables in x.py.  These variables form the
+non-data-specific parts of the blocks of text that will be spliced with the NSA
+data to create the .spc file, which is an input to x12.
+
+Note that x12 can produce a lot of different output.  By default x.py reads the
+table "D 11" of the output.  It is possible to get the seasonal factors instead
+by changing "D 11" to "D 10", and it is likely possible to get other outputs,
+but I've not tested this.
+
+adjust.do 
+
+This .do file, and the .dta file, are an example of how you would use this in
+stata.
+
+To use this on your data in stata, start with adjust.do, and make sure htat
+your own data exists in the data set to be written to .csv.  It is important to
+have a column called 'date' that will be an appropriately formatted date string
+when written to .csv.  I don't think this has to be in the first column of the
+.csv, but I wouldn't chance it.
+
+
